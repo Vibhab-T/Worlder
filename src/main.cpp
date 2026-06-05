@@ -1,72 +1,52 @@
 #include "raylib.h"
-#include "iostream"
+#include <random>
+#include <array>
 
-Vector3 v0 = {-0.85, 0, 0.525};
-Vector3 v1 = {0.85, 0, 0.525};
-Vector3 v2 = {0.85, 0, -0.525};
-Vector3 v3 = {-0.85, 0, -0.525};
+Vector3 v0 = {0.8506508f, 0.5257311f, 0.f};
+Vector3 v1 = {0.000000101405476f, 0.8506507f, -0.525731f};
+Vector3 v2 = {0.000000101405476f, 0.8506506f, 0.525731f};
+Vector3 v3 = {0.5257309f, -0.00000006267203f, -0.85065067f};
+Vector3 v4 = {0.52573115f, -0.00000006267203f, 0.85065067f};
+Vector3 v5 = {0.8506508f, -0.5257311f, 0.f};
+Vector3 v6 = {-0.52573115f, 0.00000006267203f, -0.85065067f};
+Vector3 v7 = {-0.8506508f, 0.5257311f, 0.f};
+Vector3 v8 = {-0.5257309f, 0.00000006267203f, 0.85065067f};
+Vector3 v9 = {-0.000000101405476f, -0.8506506f, -0.525731f};
+Vector3 v10 = {-0.000000101405476f, -0.8506507f, 0.525731f};
+Vector3 v11 = {-0.8506508f, -0.5257311f, 0.f};
 
-void DrawRectPlane(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, Color color)
+std::array<std::array<Vector3, 3>, 20> triangleFaces = {
+    {{v0, v1, v2},
+     {v0, v3, v1},
+     {v0, v2, v4},
+     {v3, v0, v5},
+     {v0, v4, v5},
+     {v1, v3, v6},
+     {v1, v7, v2},
+     {v7, v1, v6},
+     {v4, v2, v8},
+     {v7, v8, v2},
+     {v9, v3, v5},
+     {v6, v3, v9},
+     {v5, v4, v10},
+     {v4, v8, v10},
+     {v9, v5, v10},
+     {v7, v6, v11},
+     {v7, v11, v8},
+     {v11, v6, v9},
+     {v8, v11, v10},
+     {v10, v11, v9}}
+
+};
+
+Color GetRandomColor()
 {
-    DrawLine3D(v0, v1, color);
-    DrawLine3D(v1, v2, color);
-    DrawLine3D(v2, v3, color);
-    DrawLine3D(v3, v0, color);
-}
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
 
-Vector3 Rotate90InX(Vector3 v)
-{
-    return (Vector3){v.x, -(v.z), 0};
-}
-Vector3 Rotate90InY(Vector3 v)
-{
-    return (Vector3){v.z, v.y, -(v.x)};
-}
-Vector3 Rotate90InZ(Vector3 v)
-{
-    return (Vector3){-(v.y), v.x, v.z};
-}
+    static std::uniform_int_distribution<int> hueRange(0, 360);
 
-void DrawGoldenRectangles()
-{
-    std::cout << "First Points (RED):\n"
-              << "  v0: (" << v0.x << ", " << v0.y << ", " << v0.z << ")\n"
-              << "  v1: (" << v1.x << ", " << v1.y << ", " << v1.z << ")\n"
-              << "  v2: (" << v2.x << ", " << v2.y << ", " << v2.z << ")\n"
-              << "  v3: (" << v3.x << ", " << v3.y << ", " << v3.z << ")\n";
-    DrawRectPlane(v0, v1, v2, v3, RED);
-
-    Vector3 x0 = Rotate90InX(v0);
-    Vector3 x1 = Rotate90InX(v1);
-    Vector3 x2 = Rotate90InX(v2);
-    Vector3 x3 = Rotate90InX(v3);
-    x0 = Rotate90InZ(x0);
-    x1 = Rotate90InZ(x1);
-    x2 = Rotate90InZ(x2);
-    x3 = Rotate90InZ(x3);
-
-    std::cout << "Second Points (BLUE):\n"
-              << "  v0: (" << x0.x << ", " << x0.y << ", " << x0.z << ")\n"
-              << "  v1: (" << x1.x << ", " << x1.y << ", " << x1.z << ")\n"
-              << "  v2: (" << x2.x << ", " << x2.y << ", " << x2.z << ")\n"
-              << "  v3: (" << x3.x << ", " << x3.y << ", " << x3.z << ")\n";
-    DrawRectPlane(x0, x1, x2, x3, BLUE);
-
-    x0 = Rotate90InZ(x0);
-    x1 = Rotate90InZ(x1);
-    x2 = Rotate90InZ(x2);
-    x3 = Rotate90InZ(x3);
-    x0 = Rotate90InY(x0);
-    x1 = Rotate90InY(x1);
-    x2 = Rotate90InY(x2);
-    x3 = Rotate90InY(x3);
-
-    std::cout << "Third Points (GREEN):\n"
-              << "  v0: (" << x0.x << ", " << x0.y << ", " << x0.z << ")\n"
-              << "  v1: (" << x1.x << ", " << x1.y << ", " << x1.z << ")\n"
-              << "  v2: (" << x2.x << ", " << x2.y << ", " << x2.z << ")\n"
-              << "  v3: (" << x3.x << ", " << x3.y << ", " << x3.z << ")\n";
-    DrawRectPlane(x0, x1, x2, x3, GREEN);
+    return ColorFromHSV(hueRange(gen), 1, 1);
 }
 
 int main()
@@ -88,10 +68,17 @@ int main()
 
     SetTargetFPS(60);
 
+    std::array<Color, 20> faceColors;
+    for (size_t i = 0; i < faceColors.size(); i++)
+    {
+        faceColors[i] = GetRandomColor();
+    }
+
     while (!WindowShouldClose())
     {
 
         // UPDATES
+        Color triangleColor = GetRandomColor();
 
         UpdateCamera(&camera, CAMERA_FREE);
         if (IsKeyPressed(KEY_Z))
@@ -104,8 +91,15 @@ int main()
             BeginMode3D(camera);
             {
                 DrawGrid(100, 1.f);
+                for (size_t i = 0; i < triangleFaces.size(); i++)
+                {
+                    auto triangle = triangleFaces[i];
+                    Color triangleColor = faceColors[i];
 
-                DrawGoldenRectangles();
+                    DrawLine3D(triangle[0], triangle[1], triangleColor);
+                    DrawLine3D(triangle[1], triangle[2], triangleColor);
+                    DrawLine3D(triangle[2], triangle[0], triangleColor);
+                }
             }
             EndMode3D();
         }
